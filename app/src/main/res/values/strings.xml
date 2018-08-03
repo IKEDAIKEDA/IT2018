@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">IkedaWork</string>
+    <string name="message_text">...</string>
+    <string name="button_text">Change!</string>
+    <string name="menu_item1">menu1</string>
+    <string name="menu_item2">menu2</string>
+    <string name="menu_item3">menu3</string>
+    <string name="menu_item4">menu4</string>
+    <string name="menu_item5">menu5</string>
+</resources>
