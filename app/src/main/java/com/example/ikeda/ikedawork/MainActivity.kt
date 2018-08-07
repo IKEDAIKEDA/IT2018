@@ -21,10 +21,6 @@ class MainActivity : AppCompatActivity() {
         imageView1.setOnClickListener{
             val animationList = mutableListOf<Animator>()
 
-            // ここで落ちる。。。
-            val objectAnimator0 = ObjectAnimator.ofFloat( imageView1, "resume")
-            animationList.add(objectAnimator0)
-
             val objectAnimator1 = ObjectAnimator.ofFloat( imageView1, "alpha", 1f, 0f )
             objectAnimator1.duration = 2000
             animationList.add(objectAnimator1)
@@ -32,7 +28,6 @@ class MainActivity : AppCompatActivity() {
             val animatorSet = AnimatorSet()
             animatorSet.playSequentially(animationList)
             animatorSet.start()
-            //objectAnimator.start()
         }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -57,8 +52,8 @@ class MainActivity : AppCompatActivity() {
         animationList.add(objectAnimator0)
 
         // Y軸（画面下方向）へ動く
-        val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",2000f)
-        objectAnimator1.duration = 3000
+        val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",1500f)
+        objectAnimator1.duration = 4000
         // objectAnimator.repeatCount = -1
         animationList.add(objectAnimator1)
 
@@ -74,11 +69,11 @@ class MainActivity : AppCompatActivity() {
         //objectAnimator.start()
     }
 
-    private val onClickListener = { img:ImageView ->
+/*    private val onClickListener = { img:ImageView ->
         val objectAnimator = ObjectAnimator.ofFloat( img, "alpha", 1f, 0f )
         objectAnimator.duration = 2000
         objectAnimator.start()
-    }
+    }*/
 
     fun changeTextView(view: View){
         messageTextView.text = "Hello, World"
