@@ -17,18 +17,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         // 画像表示、下移動、消える
         this.animateTranslationY(imageView1)
-        // クリックで消える
-        imageView1.setOnClickListener{
-            val animationList = mutableListOf<Animator>()
-
-            val objectAnimator1 = ObjectAnimator.ofFloat( imageView1, "alpha", 1f, 0f )
-            objectAnimator1.duration = 2000
-            animationList.add(objectAnimator1)
-
-            val animatorSet = AnimatorSet()
-            animatorSet.playSequentially(animationList)
-            animatorSet.start()
-        }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main,menu)
@@ -66,7 +54,20 @@ class MainActivity : AppCompatActivity() {
         animatorSet.playSequentially(animationList)
         animatorSet.start()
 
-        //objectAnimator.start()
+        // クリックで消える
+        img.setOnClickListener{
+            // タッチされたタイミングで下方向へのanimatorSetはcancel
+            animatorSet.cancel()
+            val animationList = mutableListOf<Animator>()
+
+            val objectAnimator1 = ObjectAnimator.ofFloat( img, "alpha", 1f, 0f )
+            objectAnimator1.duration = 2000
+            animationList.add(objectAnimator1)
+
+            val animatorSetTouch = AnimatorSet()
+            animatorSetTouch.playSequentially(animationList)
+            animatorSetTouch.start()
+        }
     }
 
 /*    private val onClickListener = { img:ImageView ->
