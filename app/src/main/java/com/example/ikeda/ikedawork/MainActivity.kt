@@ -20,15 +20,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //var soundPool:SoundPool? = null
-        var soundOne:Int = 0
+        var soundOne = 0
         val audioAttribute = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build()
         val soundPool = SoundPool.Builder().
                 setAudioAttributes(audioAttribute).build()
-        soundOne = soundPool.load(this, R.raw.water_drop3, 1)
+        soundOne = soundPool.load(this, R.raw.water_drop3, 0)
 
-        // 画像表示、下移動、消える
-        this.animateTranslationY(imageView1, soundPool, soundOne)
+        soundPool.setOnLoadCompleteListener({ soundPool, sampleId, status ->
+            if ( status == 0 )
+            // 画像表示、下移動、消える
+            this.animateTranslationY(imageView1, soundPool, soundOne)
+        })
+
+            // 画像表示、下移動、消える
+            //this.animateTranslationY(imageView1, soundPool, soundOne)
+
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main,menu)
