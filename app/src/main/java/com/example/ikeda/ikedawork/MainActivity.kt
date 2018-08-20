@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Point
 import android.media.SoundPool
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     val soundPool = SoundPool.Builder().setMaxStreams(1).build()
@@ -22,10 +24,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         soundId = soundPool.load(this, R.raw.se_bell, 0)
+        // ロードが完了したらアニメーション開始
         soundPool.setOnLoadCompleteListener({ soundPool, sampleId, status ->
-            if ( status == 0 )
-            // 画像表示、下移動、消える
-            this.animateTranslationY(imageView1, soundPool, soundId)
+            if (status == 0)
+                this.animateTranslationY(imageView1, soundPool, soundId)
         })
 
     }
@@ -49,6 +51,25 @@ class MainActivity : AppCompatActivity() {
     private fun animateTranslationY(img: ImageView, soundPool: SoundPool?, soundId:Int){
         val animationList = mutableListOf<Animator>()
 
+        //初期表示x座標をランダム
+        var screenWidth = 1080
+        val screen = this.windowManager.defaultDisplay
+        val point = Point()
+        screen.getSize(point)
+        screenWidth = point.x
+        val rand = Random()
+        val randomInt: Int = rand.nextInt(99) + 1
+        var startX: Float = screenWidth.toFloat() * (randomInt / 100F)
+        if(screenWidth.toFloat() - startX < img.width){
+            startX = screenWidth.toFloat() - img.width
+        }
+        val endY: Float = point.y.toFloat() - (img.height / 2)
+
+        // 表示位置
+        val objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
+        objectAnimatorX.duration = 0
+        animationList.add(objectAnimatorX)
+
         // 表示
         val objectAnimator0 = ObjectAnimator.ofFloat(img,"alpha",0f,1f)
         objectAnimator0.duration = 2000
@@ -56,6 +77,8 @@ class MainActivity : AppCompatActivity() {
 
         // Y軸（画面下方向）へ動く
         val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",1500f)
+        // endYでやると画面を突き抜けてしまうので暫定的に↑で…
+        //val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",endY )
         objectAnimator1.duration = 4000
         animationList.add(objectAnimator1)
 
@@ -66,14 +89,22 @@ class MainActivity : AppCompatActivity() {
 
         val animatorSet = AnimatorSet()
         animatorSet.playSequentially(animationList)
+        var canceled = false
         animatorSet.addListener(object : Animator.AnimatorListener{
             // アニメーションが終了したときに音を鳴らす
             override fun onAnimationEnd(animation: Animator?) {
                 soundPool?.play(soundId,1.0f,1.0f,0,0,1.0f)
+                if (!canceled) {
+                    animation?.start()
+                }
             }
-            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationCancel(animation: Animator?) {
+                canceled=true
+            }
             override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {
+                canceled=false
+            }
         })
         animatorSet.start()
 
