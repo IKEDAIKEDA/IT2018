@@ -84,23 +84,14 @@ class MainActivity : AppCompatActivity() {
         animatorSet.playSequentially(animationList)
         var canceled = false
         animatorSet.addListener(object : Animator.AnimatorListener{
+            override fun onAnimationCancel(animation: Animator?) {
+                canceled=true
+            }
             // アニメーションが終了したときに音を鳴らす
             override fun onAnimationEnd(animation: Animator?) {
                 soundPool?.play(soundId,1.0f,1.0f,0,0,1.0f)
                 if (!canceled) {
                     // startX再設定
-                    setStartX(img,point)
-                    objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
-                    animationList[0] = objectAnimatorX
-                    animatorSet.playSequentially(animationList)
-                    animation?.start()
-                }
-            }
-            override fun onAnimationCancel(animation: Animator?) {
-                // canceled=true
-                if (!canceled) {
-                    // startX再設定
-                    // 動きがおかしい
                     setStartX(img,point)
                     objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
                     animationList[0] = objectAnimatorX
@@ -127,6 +118,26 @@ class MainActivity : AppCompatActivity() {
 
             val animatorSetTouch = AnimatorSet()
             animatorSetTouch.playSequentially(animationList)
+            animatorSetTouch.addListener(object : Animator.AnimatorListener{
+                override fun onAnimationEnd(animation: Animator?) {
+                    if (!canceled) {
+                        // startX再設定
+                        setStartX(img,point)
+                        objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
+                        animationList[0] = objectAnimatorX
+                        animatorSet.playSequentially(animationList)
+                        // 元のアニメーションを繰り返し実行
+                        animatorSet.start()
+                    }
+                }
+                override fun onAnimationCancel(animation: Animator?) {
+                    canceled=true
+                }
+                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationStart(animation: Animator?) {
+                    canceled=false
+                }
+            })
             animatorSetTouch.start()
         }
     }
