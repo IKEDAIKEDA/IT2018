@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Point
+import android.graphics.Rect
 import android.media.SoundPool
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        soundId = soundPool.load(this, R.raw.se_bell, 0)
+        //soundId = soundPool.load(this, R.raw.se_bell, 0)
+        soundId = soundPool.load(this, R.raw.rin_1, 0)
         // ロードが完了したらアニメーション開始
         soundPool.setOnLoadCompleteListener({ soundPool, sampleId, status ->
             if (status == 0)
@@ -56,7 +58,8 @@ class MainActivity : AppCompatActivity() {
         val point = Point()
         // X座標をセット
         setStartX(img,point)
-        val endY: Float = point.y.toFloat() - (img.height / 2)
+        val endY: Float = point.y.toFloat() - img.height - statusBarHeight(this)
+
 
         // 表示位置
         var objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
@@ -69,9 +72,9 @@ class MainActivity : AppCompatActivity() {
         animationList.add(objectAnimator0)
 
         // Y軸（画面下方向）へ動く
-        val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",1500f)
-        // endYでやると画面を突き抜けてしまうので暫定的に↑で…
-        //val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",endY )
+        //val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",1500f)
+        val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",endY )
+        // endYでやるとまだ画面を突き抜けてしまうが、一旦↑で
         objectAnimator1.duration = 4000
         animationList.add(objectAnimator1)
 
@@ -155,6 +158,15 @@ class MainActivity : AppCompatActivity() {
             startX = screenWidth.toFloat() - img.width
         }
     }
+
+    //ステータスバーの高さ
+    fun statusBarHeight(activity: MainActivity):Int{
+        val rect = Rect()
+        val window = activity.getWindow()
+        window.getDecorView().getWindowVisibleDisplayFrame(rect)
+        return rect.top
+    }
+
     // アプリ終了時にリソース解放処理
     override fun onDestroy() {
         super.onDestroy()
