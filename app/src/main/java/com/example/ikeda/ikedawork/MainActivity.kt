@@ -8,6 +8,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.media.SoundPool
 import android.support.v7.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -16,7 +17,7 @@ import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
     val soundPool = SoundPool.Builder().setMaxStreams(1).build()
     // 色々な音色に後から変えられる用にvarで
     var soundId = 0
@@ -72,9 +73,7 @@ class MainActivity : AppCompatActivity() {
         animationList.add(objectAnimator0)
 
         // Y軸（画面下方向）へ動く
-        //val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",1500f)
         val objectAnimator1 = ObjectAnimator.ofFloat(img, "translationY",endY )
-        // endYでやるとまだ画面を突き抜けてしまうが、一旦↑で
         objectAnimator1.duration = 4000
         animationList.add(objectAnimator1)
 
