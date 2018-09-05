@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Point
 import android.graphics.Rect
 import android.media.SoundPool
-import android.support.v7.app.AppCompatActivity
 import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
@@ -16,6 +15,9 @@ import android.view.MenuItem
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import android.animation.PropertyValuesHolder
+
+
 
 class MainActivity : Activity() {
     val soundPool = SoundPool.Builder().setMaxStreams(1).build()
@@ -27,7 +29,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //soundId = soundPool.load(this, R.raw.se_bell, 0)
         soundId = soundPool.load(this, R.raw.rin_1, 0)
         // ロードが完了したらアニメーション開始
         soundPool.setOnLoadCompleteListener({ soundPool, sampleId, status ->
@@ -93,9 +94,13 @@ class MainActivity : Activity() {
             override fun onAnimationEnd(animation: Animator?) {
                 soundPool?.play(soundId,1.0f,1.0f,0,0,1.0f)
                 if (!canceled) {
+                    val oldStartX:Float = startX
                     // startX再設定
                     setStartX(img,point)
-                    objectAnimatorX = ObjectAnimator.ofFloat(img,"translationX",startX)
+                    val holderX = PropertyValuesHolder.ofFloat("translationX", oldStartX, startX)
+                    val holderY = PropertyValuesHolder.ofFloat("translationY", endY, 0f)
+                    objectAnimatorX = ObjectAnimator.ofPropertyValuesHolder(
+                            img, holderX, holderY)
                     animationList[0] = objectAnimatorX
                     animatorSet.playSequentially(animationList)
                     animation?.start()
